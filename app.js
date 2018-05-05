@@ -1,31 +1,13 @@
 /*exported startGame, guessLetter*/
 'use strict';
-// function Game(word, guess, progress, numGuesses) {
-//     this.randomWord = word;
-//     this.userGuess = guess;
-//     this.userProgress = progress;
-//     this.numGuesses = numGuesses;
-// }
-
-// function newGame() {
-//     var newGame = new Game('random word', 'k', '______ ____', 6);
-//     console.log(newGame);
-// }
-
-// function checker() {
-//     console.log(newGame.randomWord);
-//     console.log(newGame.userGuess);
-//     console.log(newGame.userProgress);
-//     console.log(newGame.numGuesses);
-// }
 
 //GLOBAL VARIABLES because I don't understand how to have multiple functions understand the same persistent variable
 var solution;
-var userProgress;
+var userProgress = [];
 var userView = document.getElementById('user-view');
 var guess;
 var guessNumber = 6;
-var guessedLetters;
+var guessedLetters = '';
 var response = document.getElementById('game-response');
 
 function randomInt(max) {
@@ -39,6 +21,16 @@ function getWord(wordList) {
 
 function gameReset() {
     console.log('game reset');
+    solution = '';
+    userProgress = [];
+    userView.textContent = '';
+    guessNumber = 6;
+    guessedLetters = '';
+    response.textContent = '';
+}
+
+function printGame() {
+    userView.textContent = userProgress.join(' ');
 }
 
 function convertWordToUnderscores(word) {
@@ -46,7 +38,7 @@ function convertWordToUnderscores(word) {
     for(var i = 0; i < word.length; i++) {
         underscoredWord += '_';
     }
-    return underscoredWord;
+    return underscoredWord.split('');
 }
 
 function startGame() {
@@ -54,25 +46,43 @@ function startGame() {
     solution = getWord(word);
     console.log(solution);
     userProgress = convertWordToUnderscores(solution);
-    userView.textContent = userProgress.split('').join(' ');
+    console.log(userProgress);
+    printGame();
 }
 
 function duplicateLetter(guess) {
     console.log('duplicate', guess);
-    response.textContent = 'You\'ve already guessed that correctLetter.';
+    response.textContent = 'You\'ve already guessed that letter.';
 }
+
 function correctLetter(guess) {
     console.log('correct', guess);
+    for(var i = 0; i < solution.length; i++){
+        if(solution[i] === guess) {
+            userProgress[i] = guess;
+        }
+    }
+    printGame();
     guessedLetters += guess;
 }
+
 function incorrectLetter(guess) {
     console.log('incorrect', guess);
-    guessedLetters += guess;
+    if(guessNumber === 0) {
+        response.textContent = 'You died.';
+    }
+    else {
+        guessNumber--;
+        console.log(guessNumber);
+        guessedLetters += guess;
+    }
 }
 
 
 function guessLetter() {
-    guess = document.getElementById('guess').value;
+    guess = document.getElementById('input').value;
+    document.getElementById('input').value = '';
+    response.textContent = '';
     if(guessedLetters.includes(guess) === true) {
         duplicateLetter(guess);
     }
