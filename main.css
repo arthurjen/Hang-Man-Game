@@ -1,5 +1,34 @@
 body {
-    background: #08021C;
+    background: rgb(0, 0, 0);
     color: white;
     font-size: 3em;
 }
+
+img {
+    position: absolute;
+    object-fit: cover;
+    width: 100%;
+    top: 0px;
+    z-index: -1;
+}
+
+#shark-1 {
+    visibility: hidden;
+}
+
+#shark-5 {
+    visibility: hidden;
+}
+
+#shark-4 {
+    visibility: hidden;
+}
+
+#shark-3 {
+    visibility: hidden;
+}
+
+#shark-2 {
+    visibility: hidden;
+}
+

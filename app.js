@@ -8,6 +8,7 @@ var userView = document.getElementById('user-view');
 var guess;
 var guessNumber = 6;
 var guessedLetters = '';
+var displayGuesses = document.getElementById('display-guesses');
 var response = document.getElementById('game-response');
 
 function randomInt(max) {
@@ -27,6 +28,8 @@ function gameReset() {
     guessNumber = 6;
     guessedLetters = '';
     response.textContent = '';
+    document.getElementById('input').value = '';
+    document.getElementById('guess-button').disabled = false;
 }
 
 function printGame() {
@@ -40,41 +43,46 @@ function convertWordToUnderscores(word) {
     }
     return underscoredWord.split('');
 }
+function updateGuessedLetters() {
+    guessedLetters += guess;
+    displayGuesses.textContent = guessedLetters.split('').join(' ');
+}
 
 function startGame() {
     gameReset();
     solution = getWord(word);
-    console.log(solution);
     userProgress = convertWordToUnderscores(solution);
-    console.log(userProgress);
-    printGame();
-}
 
-function duplicateLetter(guess) {
-    console.log('duplicate', guess);
-    response.textContent = 'You\'ve already guessed that letter.';
+    printGame();
+    for(var i = 1; i < 6; i++) {
+        document.getElementById('shark-' + i).style.visibility = 'hidden';
+    }
+    document.getElementById('shark-6').style.visibility = 'visible';
 }
 
 function correctLetter(guess) {
-    console.log('correct', guess);
     for(var i = 0; i < solution.length; i++){
         if(solution[i] === guess) {
             userProgress[i] = guess;
         }
     }
     printGame();
-    guessedLetters += guess;
+    updateGuessedLetters();
 }
 
-function incorrectLetter(guess) {
-    console.log('incorrect', guess);
-    if(guessNumber === 0) {
-        response.textContent = 'You died.';
+function incorrectLetter() {
+    if(guessNumber === 1) {
+        updateGuessedLetters();
+        response.textContent = 'GAME OVER';
+        document.getElementById('guess-button').disabled = true;
+        for(var i = 1; i < 7; i++) {
+            document.getElementById('shark-' + i).style.visibility = 'hidden';
+        }
     }
     else {
         guessNumber--;
-        console.log(guessNumber);
-        guessedLetters += guess;
+        document.getElementById('shark-' + guessNumber).style.visibility = 'visible';
+        updateGuessedLetters();
     }
 }
 
@@ -83,13 +91,16 @@ function guessLetter() {
     guess = document.getElementById('input').value;
     document.getElementById('input').value = '';
     response.textContent = '';
-    if(guessedLetters.includes(guess) === true) {
-        duplicateLetter(guess);
+    if(guess === '') {
+        response.textContent = 'Enter a letter.';
+    }
+    else if(guessedLetters.includes(guess) === true) {
+        response.textContent = 'You\'ve already guessed that letter.';
     }
     else if(solution.includes(guess) === true) {
         correctLetter(guess);
     }
     else {
-        incorrectLetter(guess);
+        incorrectLetter();
     }
 }
