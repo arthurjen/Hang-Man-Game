@@ -89,6 +89,7 @@ function incorrectLetter() {
 
 function guessLetter() {
     guess = document.getElementById('input').value;
+    guess = guess.toLowerCase();
     document.getElementById('input').value = '';
     response.textContent = '';
     if(guess === '') {
